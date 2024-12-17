@@ -1,7 +1,18 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 
-const PORT = 8080;
+// Improts
+const userRoutes = require('./routes/user.route');
+const createdConnection = require('./database/database');
+
+createdConnection()
+
+const { PORT } = process.env || 8080;
+
+
+app.use('/v1/api/user', userRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
