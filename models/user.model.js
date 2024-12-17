@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ROLE } = require('../utils');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -40,6 +41,19 @@ const userSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+userSchema.pre('save', async function(next) {
+    try {
+        const hashedPassword = await bcrypt.hash(this.password, 10);
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        next(error); // Pass error to next middleware or callback
+    }
+});
+
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

@@ -11,10 +11,33 @@ const createUser = async (user) => {
             password,
         });
 
+        // const user = User.findOne({ email}).select('+password') // select form get the password also
+
         return newUser;
     } catch (error) {
         throw new Error('Failed to create user.');
     }
 }
 
-module.exports = { createUser };
+// login user
+const loginUser = async (email, password) => {
+    try {
+        const user = await User.findOne({ email }).select('+password');
+
+        if (!user) {
+            throw new Error('Invalid email or password.');
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            throw new Error('Invalid email or password.');
+        }
+
+        return user;
+    } catch (error) {
+        throw new Error('Failed to login user.');
+    }
+}
+
+module.exports = { createUser,loginUser };
