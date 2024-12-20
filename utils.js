@@ -25,4 +25,22 @@ const createToken = (user) => {
     return token;
 }
 
-module.exports = { ROLE, createToken, CATEGORY, SIZES };
+const verifyToken = (token) => {
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        return payload;
+    } catch (error) {
+        throw new Error('Invalid token.');
+    }
+}
+
+
+const getErrorMessageFromZodErros = (schema) => {
+    const errors = schema.error.errors.map((err) => ({
+        field: err.path.join('.'), // Path to the field that caused the error
+        message: err.message,     // Error message
+    }));
+    return errors;
+}
+
+module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken };
