@@ -11,4 +11,15 @@ const createProductInterface = zod.object({
     sizes: zod.array(zod.enum(Object.values(SIZES))).min(1),
 });
 
-module.exports = {createProductInterface};
+// updateProductInterface
+const updateProductInterface = createProductInterface.partial({
+    price: zod.number().min(1).optional(),
+    quantity: zod.number().min(0).optional(),
+    sizes: zod.array(zod.enum(Object.values(SIZES))).optional(),
+    image: zod.string().url().optional(),
+    category: zod.enum(Object.values(CATEGORY)).optional(),
+    description: zod.string().min(10).optional(),
+    name: zod.string().min(3).optional(),
+});
+
+module.exports = {createProductInterface, updateProductInterface};

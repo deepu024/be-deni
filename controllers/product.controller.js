@@ -1,4 +1,4 @@
-const { createProductInterface } = require("../interfaces/product.interface");
+const { createProductInterface, updateProductInterface } = require("../interfaces/product.interface");
 const z = require("zod");
 const productService = require("../services/product.service");
 const { getErrorMessageFromZodErros } = require("../utils");
@@ -36,5 +36,45 @@ const getAllProducts = async (req, res) => {
     }
 }
 
+const updateProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const validateProduct = updateProductInterface.safeParse(req.body);
 
-module.exports = {createProduct, getAllProducts};
+        if (!validateProduct.success) {
+            return res.status(400).json({ message: 'Invalid product data.', error: getErrorMessageFromZodErros(validateProduct) });
+        }
+
+        const updatedProduct = await productService.updateProduct(id, validateProduct.data);
+        res.json({ message: 'Product updated successfully.', data: updatedProduct });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!' });   
+    }
+}
+
+// Delete a product
+const deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await productService.deleteProduct(id);
+        res.json({ message: 'Product deleted successfully.', data: product });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!', errro: error.message });   
+    }
+}
+
+// Get product by ID
+const getProductById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await productService.getProductById(id);
+        res.json({ message: 'Product fetched successfully.', data: product });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!', error: error.message });   
+    }
+}
+
+module.exports = {createProduct, getAllProducts, updateProduct, deleteProduct, getProductById};
