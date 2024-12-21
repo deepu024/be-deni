@@ -43,4 +43,13 @@ const getErrorMessageFromZodErros = (schema) => {
     return errors;
 }
 
-module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken };
+const generateRandomPassword = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < 10; i++) {
+        password += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return password;
+}
+
+module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken, generateRandomPassword };

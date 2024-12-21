@@ -10,9 +10,7 @@ const createUser = async (user) => {
             email,
             password,
         });
-
-        // const user = User.findOne({ email}).select('+password') // select form get the password also
-
+        
         return newUser;
     } catch (error) {
         throw new Error('Failed to create user.');
