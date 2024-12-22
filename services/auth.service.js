@@ -32,7 +32,7 @@ const googleLogin = async (token) => {
         const client = new OAuth2Client();
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: "966416161943-ei2p86e6mq2da05tn1mven4v87konelk.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+            audience: process.env.GOOGLE_CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
         });
         const payload = ticket.getPayload();
         const { name, email } = payload;
