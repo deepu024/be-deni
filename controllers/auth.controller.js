@@ -1,12 +1,12 @@
 const authService = require('../services/auth.service')
 const { createToken, getErrorMessageFromZodErros } = require('../utils')
-const { createAdminInterface } = require('../interfaces/user.interface')
+const {loginUserInterface, registerUserInterface} = require('../interfaces/auth.interface');
 
 
 // login user
 const loginUser = async (req, res) => {
     try {
-        const validateLoginUser = createAdminInterface.parse(req.body);
+        const validateLoginUser = loginUserInterface.safeParse(req.body);
         if(!validateLoginUser.success){
             return res.status(400).json({ message: "Invalid user data", errors: getErrorMessageFromZodErros(validateLoginUser)});
         }
