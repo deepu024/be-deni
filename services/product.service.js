@@ -61,4 +61,14 @@ const getProductById = async (id) => {
     }
 }
 
-module.exports = { createProduct, getAllProducts, updateProduct, deleteProduct, getProductById };
+const getProductByCategoryName = async (categoryName) => {
+    try {
+        const products = await Product.find({ category: categoryName });
+        return products;
+    } catch (error) {
+        console.error(error.message);
+        throw new Error('Failed to fetch products by category');
+    }
+}
+
+module.exports = { createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName };

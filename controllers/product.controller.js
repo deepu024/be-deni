@@ -77,4 +77,15 @@ const getProductById = async (req, res) => {
     }
 }
 
-module.exports = {createProduct, getAllProducts, updateProduct, deleteProduct, getProductById};
+const getProductByCategoryName = async (req, res) => {
+    try {
+        const categoryName = req.params.categoryName;
+        const products = await productService.getProductByCategoryName(categoryName);
+        res.json({ message: 'Products fetched successfully.', data: products });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!', error: error.message });   
+    }
+}
+
+module.exports = {createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName};
