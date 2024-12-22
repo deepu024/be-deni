@@ -1,5 +1,29 @@
 const authService = require('../services/auth.service')
+const { createToken, getErrorMessageFromZodErros } = require('../utils')
+const { createAdminInterface } = require('../interfaces/user.interface')
 
+
+// login user
+const loginUser = async (req, res) => {
+    try {
+        const validateLoginUser = createAdminInterface.parse(req.body);
+        if(!validateLoginUser.success){
+            return res.status(400).json({ message: "Invalid user data", errors: getErrorMessageFromZodErros(validateLoginUser)});
+        }
+
+        // login user
+        const user = await authService.loginUser(validateLoginUser.data);
+        // create token
+        const token = createToken(user);
+        // send response
+        res.status(200).json({ message: 'User logged in successfully.', token, user });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!' });
+    }
+}
+
+// google login
 const googleLogin = async (req, res) => {
     try {
         const header = req.headers['authorization'];
@@ -15,4 +39,4 @@ const googleLogin = async (req, res) => {
     }
 }
 
-module.exports = { googleLogin };
+module.exports = { googleLogin, loginUser };
