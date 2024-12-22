@@ -88,4 +88,18 @@ const getProductByCategoryName = async (req, res) => {
     }
 }
 
-module.exports = {createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName};
+const getProductBySearch = async (req, res) => {
+    try {
+        const search = req.query.search;
+        if(search){
+            const products = await productService.getProductBySearch(search);
+            return res.status(200).json({ message: 'Products fetched successfully.', data: products });
+        }
+        return res.status(400).json({ message: 'Please provide a search query.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error!', error: error.message });   
+    }
+}
+
+module.exports = {createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName, getProductBySearch};

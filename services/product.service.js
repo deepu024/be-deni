@@ -71,4 +71,18 @@ const getProductByCategoryName = async (categoryName) => {
     }
 }
 
-module.exports = { createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName };
+const getProductBySearch = async (search) => {
+    try {
+        const products = await Product.find({
+            name: {
+                $regex: new RegExp(search, 'i')
+            }
+        });
+        return products;
+    } catch (error) {
+        console.error(error.message);
+        throw new Error('Failed to fetch products by search');
+    }
+}
+
+module.exports = { createProduct, getAllProducts, updateProduct, deleteProduct, getProductById, getProductByCategoryName, getProductBySearch };
