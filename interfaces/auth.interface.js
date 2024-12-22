@@ -12,4 +12,5 @@ const loginUserInterface = z.object({
     password: z.string({message: "Password must be 8 character"}).min(8),
 });
 
+
 module.exports = { registerUserInterface, loginUserInterface };
