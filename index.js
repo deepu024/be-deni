@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const app = express();
-
+const cors = require('cors');
 // Improts
 const userRoutes = require('./routes/user.route');
 const productRoutes = require('./routes/product.route');
@@ -17,6 +17,7 @@ createdConnection()
 const { PORT } = process.env || 8080;
 
 app.use(express.json());
+app.use(cors());
 app.use('/v1/api/user', userRoutes);
 app.use('/v1/api/product', productRoutes);
 app.use('/v1/api/admin', adminRoutes);

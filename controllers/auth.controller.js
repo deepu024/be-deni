@@ -30,7 +30,8 @@ const googleLogin = async (req, res) => {
         if(header){
             const token = header.split(' ')[1];
             const payload = await authService.googleLogin(token);
-            return res.json({ message: 'User logged in successfully.', data: payload });
+            const jwtToken = createToken(payload);
+            return res.json({ message: 'User logged in successfully.', data: payload, token: jwtToken });
         }
         return res.status(401).json({ message: 'Invalid token.' });
     } catch (error) {
