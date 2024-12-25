@@ -36,9 +36,7 @@ const googleLogin = async (token) => {
         });
         const payload = ticket.getPayload();
         const { name, email } = payload;
-        const password = generateRandomPassword();
-        const user = await userService.createUser({ name, email, password })
-        return user;
+        return {name, email};
     } catch (error) {
         console.error(error.message);
         throw new Error(error.message);
