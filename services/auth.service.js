@@ -1,8 +1,6 @@
 const { OAuth2Client } = require("google-auth-library");
 const User = require('../models/user.model');
-const userService = require('../services/user.service');
-const { generateRandomPassword } = require("../utils");
-
+const { verifyToken, createToken, verifyRefreshToken } = require("../utils");
 
 // login user
 const loginUser = async (userData) => {
@@ -43,6 +41,23 @@ const googleLogin = async (token) => {
     }
 }
 
+const refreshToken = (refreshToken) => {
+    try {
+
+        const user = verifyRefreshToken(refreshToken);
+
+        if (!user) {
+            throw new Error('Invalid refresh token.');
+        }
+
+        const token = createToken(user);
+        return token;
+    } catch (error) {
+        console.error(error.message);
+        throw new Error(error.message);
+    }
+}
 
 
-module.exports = {googleLogin, loginUser}
+
+module.exports = {googleLogin, loginUser, refreshToken}

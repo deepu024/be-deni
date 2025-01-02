@@ -25,6 +25,18 @@ const createToken = (user) => {
     return token;
 }
 
+const createTokens = (user) => {
+    const accessToken = createToken(user);
+
+    const refreshToken = jwt.sign(
+        { id: user._id, role: user.role, email: user.email },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+    );
+
+    return { accessToken, refreshToken };
+};
+
 const verifyToken = (token) => {
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
@@ -34,6 +46,14 @@ const verifyToken = (token) => {
     }
 }
 
+const verifyRefreshToken = (token) => {
+    try {
+        const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        return payload;
+    } catch (error) {
+        throw new Error('Invalid token.');
+    }
+}
 
 const getErrorMessageFromZodErros = (schema) => {
     const errors = schema.error.errors.map((err) => ({
@@ -52,4 +72,4 @@ const generateRandomPassword = () => {
     return password;
 }
 
-module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken, generateRandomPassword };
+module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken,verifyRefreshToken, generateRandomPassword, createTokens };

@@ -1,5 +1,5 @@
 const authService = require('../services/auth.service')
-const { createToken, getErrorMessageFromZodErros, generateRandomPassword } = require('../utils')
+const { createTokens, getErrorMessageFromZodErros, generateRandomPassword } = require('../utils')
 const { loginUserInterface } = require('../interfaces/auth.interface');
 const userService = require('../services/user.service');
 
@@ -15,7 +15,7 @@ const loginUser = async (req, res) => {
         // login user
         const user = await authService.loginUser(validateLoginUser.data);
         // create token
-        const token = createToken(user);
+        const token = createTokens(user);
         // send response
         res.status(200).json({ message: 'User logged in successfully.', token, user });
     } catch (error) {
@@ -33,12 +33,12 @@ const googleLogin = async (req, res) => {
             const {name, email} = await authService.googleLogin(token);
             const alreadyUser = await userService.getUserByEmail(email);
             if(alreadyUser){
-                const jwtToken = createToken(alreadyUser);
+                const jwtToken = createTokens(alreadyUser);
                 return res.status(200).json({ message: 'Logged In Successfully', user: alreadyUser, token: jwtToken });
             } else {
                 const password = generateRandomPassword();
                 const user = await userService.createUser({ name, email, password });
-                const jwtToken = createToken(user);
+                const jwtToken = createTokens(user);
                 return res.status(201).json({ message: 'User created successfully', user, token: jwtToken });
             }
         }
@@ -49,4 +49,15 @@ const googleLogin = async (req, res) => {
     }
 }
 
-module.exports = { googleLogin, loginUser };
+const refreshToken = (req, res) => {
+    try {
+        const refreshToken = req.body.refreshToken;
+        const token = authService.refreshToken(refreshToken);
+        return res.json({ message: 'Token refreshed successfully.', accessToken: token });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ message: 'Internal Server Error!' });
+    }
+}
+
+module.exports = { googleLogin, loginUser, refreshToken };

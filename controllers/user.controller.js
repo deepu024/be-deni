@@ -1,6 +1,6 @@
 const { registerUserInterface } = require('../interfaces/auth.interface');
 const userService = require('../services/user.service');
-const { createToken, getErrorMessageFromZodErros } = require('../utils');
+const { createTokens, getErrorMessageFromZodErros } = require('../utils');
 
 const createUser = async (req, res) => {
     try {
@@ -10,7 +10,7 @@ const createUser = async (req, res) => {
         }
 
         const user = await userService.createUser(validateUser.data);
-        const token = createToken(user);
+        const token = createTokens(user);
         res.status(201).json({
             message: 'User created successfully.',
             user,
