@@ -27,6 +27,10 @@ app.use('/v1/api/category', categoryRoutes);
 
 app.use(errorHandler)
 
+app.get('/', (req, res) => {
+    res.send('API is running...');
+})
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
