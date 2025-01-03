@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth.route');
 const categoryRoutes = require('./routes/category.route');
 
 const createdConnection = require('./database/database');
+const errorHandler = require('./middleware/error.middleware');
 
 createdConnection()
 
@@ -23,6 +24,8 @@ app.use('/v1/api/product', productRoutes);
 app.use('/v1/api/admin', adminRoutes);
 app.use('/v1/api/auth', authRoutes);
 app.use('/v1/api/category', categoryRoutes);
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

@@ -2,30 +2,27 @@ const authService = require('../services/auth.service')
 const { createTokens, getErrorMessageFromZodErros, generateRandomPassword } = require('../utils')
 const { loginUserInterface } = require('../interfaces/auth.interface');
 const userService = require('../services/user.service');
-
+const ErrorHandler = require('../errors/ErrorHandler');
+const STATUS_CODES = require('../statusCodes');
 
 // login user
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
     try {
         const validateLoginUser = loginUserInterface.safeParse(req.body);
         if(!validateLoginUser.success){
-            return res.status(400).json({ message: "Invalid user data", errors: getErrorMessageFromZodErros(validateLoginUser)});
+            throw new ErrorHandler("Invalid user data", STATUS_CODES.BAD_REQUEST, getErrorMessageFromZodErros(validateLoginUser))
         }
-
-        // login user
         const user = await authService.loginUser(validateLoginUser.data);
-        // create token
         const token = createTokens(user);
-        // send response
         res.status(200).json({ message: 'User logged in successfully.', token, user });
+
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: 'Internal Server Error!' });
+        next(error);
     }
 }
 
 // google login
-const googleLogin = async (req, res) => {
+const googleLogin = async (req, res, next) => {
     try {
         const header = req.headers['authorization'];
         if(header){
@@ -42,21 +39,19 @@ const googleLogin = async (req, res) => {
                 return res.status(201).json({ message: 'User created successfully', user, token: jwtToken });
             }
         }
-        return res.status(401).json({ message: 'Invalid token.' });
+        throw new ErrorHandler('Invalid token.', STATUS_CODES.UNAUTHORIZED);
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        next(error);
     }
 }
 
-const refreshToken = (req, res) => {
+const refreshToken = (req, res, next) => {
     try {
         const refreshToken = req.body.refreshToken;
         const token = authService.refreshToken(refreshToken);
         return res.json({ message: 'Token refreshed successfully.', accessToken: token });
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        next(error);
     }
 }
 

@@ -1,21 +1,21 @@
 const { createAdminInterface } = require("../interfaces/admin.interface");
 const adminService = require('../services/admin.service');
 const { getErrorMessageFromZodErros } = require("../utils");
+const ErrorHandler = require('../errors/ErrorHandler');
+const STATUS_CODES = require('../statusCodes');
 
-
-const createAdmin = async (req, res) => {
+const createAdmin = async (req, res, next) => {
     try {
         const validateAdmin = createAdminInterface.safeParse(req.body);
 
         if (!validateAdmin.success) {
-            return res.status(400).json({ message: 'Invalid admin data.', error: getErrorMessageFromZodErros(validateAdmin) });
+            throw new ErrorHandler('Invalid admin data.', STATUS_CODES.BAD_REQUEST, getErrorMessageFromZodErros(validateAdmin));
         }
 
         const admin = await adminService.createAdmin(validateAdmin.data);
-        res.status(201).json({ message: 'Admin created successfully.', data: admin });
+        res.status(STATUS_CODES.CREATED).json({ message: 'Admin created successfully.', data: admin });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: 'Internal Server Error!' });
+        next(error);
     }
 }
 

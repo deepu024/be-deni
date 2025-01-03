@@ -1,35 +1,43 @@
 const Product = require('../models/product.model');
+const ErrorHandler = require('../errors/ErrorHandler');
+const STATUS_CODES = require('../statusCodes');
 
 const createProduct = async (productSchema) => {
     try {
         const newProduct = await Product.create(productSchema);
         return newProduct;
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler(error.message, STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
-const getAllProducts = () => {
+const getAllProducts = async () => {
     try {
-        return Product.find({});
+        return await Product.find({});
     } catch (error) {
-        console.error(error.message);
-        throw new Error('Failed to fetch products');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Failed to fetch products', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
 // Update product
 const updateProduct = async (id, productSchema) => {
     try {
-        const updatedProduct = await Product.findByIdAndUpdate(id, productSchema, {new: true});
+        const updatedProduct = await Product.findByIdAndUpdate(id, productSchema, { new: true });
         if (!updatedProduct) {
-            throw new Error('Product not found');
+            throw new ErrorHandler('Product not found', STATUS_CODES.NOT_FOUND);
         }
         return updatedProduct;
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler(error.message, STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -38,12 +46,14 @@ const deleteProduct = async (id) => {
     try {
         const deletedProduct = await Product.findByIdAndDelete(id);
         if (!deletedProduct) {
-            throw new Error('Product not found');
+            throw new ErrorHandler('Product not found', STATUS_CODES.NOT_FOUND);
         }
         return deletedProduct;
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler(error.message, STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -52,12 +62,14 @@ const getProductById = async (id) => {
     try {
         const product = await Product.findById(id);
         if (!product) {
-            throw new Error('Product not found');
+            throw new ErrorHandler('Product not found', STATUS_CODES.NOT_FOUND);
         }
         return product;
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler(error.message, STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -66,8 +78,10 @@ const getProductByCategoryName = async (categoryName) => {
         const products = await Product.find({ category: categoryName });
         return products;
     } catch (error) {
-        console.error(error.message);
-        throw new Error('Failed to fetch products by category');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Failed to fetch products by category', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -80,8 +94,10 @@ const getProductBySearch = async (search) => {
         });
         return products;
     } catch (error) {
-        console.error(error.message);
-        throw new Error('Failed to fetch products by search');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Failed to fetch products by search', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 

@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
 const User = require('../models/user.model');
+const ErrorHandler = require('../errors/ErrorHandler');
+const STATUS_CODES = require('../statusCodes');
 
 const createUser = async (userData) => {
     try {
         const { name, email, password } = userData;
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            throw new ErrorHandler('User with this email already exists.', STATUS_CODES.CONFLICT);
+        }
 
         const newUser = await User.create({
             name,
@@ -13,7 +20,10 @@ const createUser = async (userData) => {
         
         return newUser;
     } catch (error) {
-        throw new Error('Failed to create user.');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Failed to create user.', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -22,10 +32,11 @@ const getUserByEmail = async (email) => {
         const user = await User.findOne({ email: email });
         return user;
     } catch (error) {
-        throw new Error('Failed to fetch user by email.');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Failed to fetch user by email.', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
-
 }
-
 
 module.exports = { createUser, getUserByEmail };

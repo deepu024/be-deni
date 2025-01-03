@@ -1,12 +1,14 @@
-const {CATEGORY} = require('../utils');
+const { CATEGORY } = require('../utils');
+const ErrorHandler = require('../errors/ErrorHandler');
+const STATUS_CODES = require('../statusCodes');
 
 const getAllCategories = () => {
     try {
         const categories = Object.values(CATEGORY);
         return categories;
     } catch (error) {
-        console.error(error.message);
+        throw new ErrorHandler('Failed to fetch categories', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
-module.exports =  {getAllCategories} ;
+module.exports = { getAllCategories };

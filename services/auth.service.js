@@ -1,26 +1,30 @@
 const { OAuth2Client } = require("google-auth-library");
 const User = require('../models/user.model');
-const { verifyToken, createToken, verifyRefreshToken } = require("../utils");
+const { createToken, verifyRefreshToken } = require("../utils");
+const ErrorHandler = require("../errors/ErrorHandler");
+const STATUS_CODES = require("../statusCodes");
 
-// login user
 const loginUser = async (userData) => {
     try {
         const { email, password } = userData;
         const user = await User.findOne({ email: email }).select('+password');
 
         if (!user) {
-            throw new Error('Invalid email or password.');
+            throw new ErrorHandler('Invalid email or password', STATUS_CODES.UNAUTHORIZED);
         }
 
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
-            throw new Error('Invalid email or password.');
+            throw new ErrorHandler('Invalid email or password', STATUS_CODES.UNAUTHORIZED);
         }
         
         return user;
     } catch (error) {
-        throw new Error('Failed to login user.');
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler('Internal Server Error', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -30,34 +34,29 @@ const googleLogin = async (token) => {
         const client = new OAuth2Client();
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+            audience: process.env.GOOGLE_CLIENT_ID,
         });
         const payload = ticket.getPayload();
         const { name, email } = payload;
-        return {name, email};
+        return { name, email };
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        throw new ErrorHandler('Google login failed', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
 const refreshToken = (refreshToken) => {
     try {
-
         const user = verifyRefreshToken(refreshToken);
 
         if (!user) {
-            throw new Error('Invalid refresh token.');
+            throw new ErrorHandler('Invalid refresh token.', STATUS_CODES.UNAUTHORIZED);
         }
 
         const token = createToken(user);
         return token;
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);
+        throw new ErrorHandler('Refresh token error', STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
-
-
-module.exports = {googleLogin, loginUser, refreshToken}
+module.exports = { googleLogin, loginUser, refreshToken }

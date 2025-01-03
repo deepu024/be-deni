@@ -1,14 +1,13 @@
 
 const categoryService = require('../services/category.service');
+const STATUS_CODES = require('../statusCodes');
 
-const getAllCategories = async (req, res) => {
+const getAllCategories = async (req, res, next) => {
     try {
         const category = categoryService.getAllCategories();
-        console.log(category);
-        res.status(200).json({message: "Categories fetched successfully", data: category});
+        res.status(STATUS_CODES.OK).json({ message: "Categories fetched successfully", data: category });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: 'Server error.' });
+        next(error);
     }
 }
 

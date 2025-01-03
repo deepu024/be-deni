@@ -42,7 +42,7 @@ const verifyToken = (token) => {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         return payload;
     } catch (error) {
-        throw new Error('Invalid token.');
+        throw new ErrorHandler('Invalid token.', STATUS_CODES.UNAUTHORIZED);
     }
 }
 
@@ -51,7 +51,7 @@ const verifyRefreshToken = (token) => {
         const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
         return payload;
     } catch (error) {
-        throw new Error('Invalid token.');
+        throw new ErrorHandler('Invalid token.', STATUS_CODES.UNAUTHORIZED);
     }
 }
 

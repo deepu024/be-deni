@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const ErrorHandler = require("../errors/ErrorHandler");
+const STATUS_CODES = require("../statusCodes");
 const { ROLE } = require("../utils");
 
 const createAdmin = async (payload) => {
@@ -15,8 +17,10 @@ const createAdmin = async (payload) => {
         return admin;
         
     } catch (error) {
-        console.error(error.message);
-        throw new Error(error.message);        
+        if (error instanceof ErrorHandler) {
+            throw error;
+        }
+        throw new ErrorHandler(error.message, STATUS_CODES.INTERNAL_SERVER_ERROR);
     }
 }
 
