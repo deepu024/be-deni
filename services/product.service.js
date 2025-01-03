@@ -1,6 +1,7 @@
 const Product = require('../models/product.model');
 const ErrorHandler = require('../errors/ErrorHandler');
 const STATUS_CODES = require('../statusCodes');
+const ApiFeature = require('../ApiFeature');
 
 const createProduct = async (productSchema) => {
     try {
@@ -14,9 +15,11 @@ const createProduct = async (productSchema) => {
     }
 }
 
-const getAllProducts = async () => {
+const getAllProducts = async (query) => {
     try {
-        return await Product.find({});
+        const apiFeature = new ApiFeature(Product.find({}), query);
+        apiFeature.filter().sort().selectFields().paginate();
+        return await apiFeature.getResults();
     } catch (error) {
         if (error instanceof ErrorHandler) {
             throw error;

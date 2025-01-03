@@ -23,9 +23,9 @@ const createProduct = async (req, res, next) => {
 
 const getAllProducts = async (req, res, next) => {
     try {
-        const products = await productService.getAllProducts();
-
-        res.status(STATUS_CODES.OK).json({ message: 'Products fetched successfully.', data: products });
+        const query = req.query;
+        const products = await productService.getAllProducts(query);
+        res.status(STATUS_CODES.OK).json({ message: 'Products fetched successfully.', data: products.results, ...products.pagination });
     } catch (error) {
         next(error);
     }

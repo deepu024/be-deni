@@ -19,4 +19,26 @@ const createAdmin = async (req, res, next) => {
     }
 }
 
-module.exports = { createAdmin };
+const getAllAdmins = async (req, res, next) => {
+    try {
+        const query = req.query;
+        const admins = await adminService.getAllAdmins(query);
+        res.status(STATUS_CODES.OK).json({ message: 'Admins fetched successfully.', data: admins.results, ...admins.pagination });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getAllUsers = async (req, res, next) => {
+    try {
+        const query = req.query;
+        const users = await adminService.getAllUsers(query);
+        res.status(STATUS_CODES.OK).json({ message: 'Users fetched successfully.', data: users.results, ...users.pagination });
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
+module.exports = { createAdmin, getAllAdmins, getAllUsers };
