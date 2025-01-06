@@ -14,7 +14,7 @@ const createProduct = async (req, res, next) => {
        }
 
        const product = await productService.createProduct(validateProduct.data);
-       res.status(201).json({ message: 'Product created successfully.', data: product });
+       res.status(STATUS_CODES.CREATED).json({ message: 'Product created successfully.', data: product });
         
     } catch (error) {
         next(error);
@@ -52,7 +52,7 @@ const deleteProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const product = await productService.deleteProduct(id);
-        res.status(STATUS_CODES.NO_CONTENT).json({ message: 'Product deleted successfully.', data: product });
+        res.status(STATUS_CODES.OK).json({ message: 'Product deleted successfully.', data: product });
     } catch (error) {
         next(error);  
     }

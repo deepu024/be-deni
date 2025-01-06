@@ -9,6 +9,10 @@ class ApiFeature {
       const page = parseInt(this.queryString.page, 10) || 1; // Default to page 1
       const limit = parseInt(this.queryString.limit, 10) || 10; // Default to limit 10
       const skip = (page - 1) * limit;
+
+      // (1 - 1) * 5 = 0;
+      // (2 - 1) * 5 = 5;
+      // (3 - 1) * 5 = 10;
   
       this.query = this.query.skip(skip).limit(limit);
   
