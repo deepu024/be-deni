@@ -30,6 +30,9 @@ app.use('/v1/api/upload', uploadRoutes);
 
 app.use(errorHandler);
 
+// make the uploads folder accessible
+app.use('/uploads', express.static('uploads'));
+
 app.get('/', (req, res) => {
     res.send('API is running...');
 })
