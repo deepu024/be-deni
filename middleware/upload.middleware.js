@@ -1,8 +1,11 @@
 const multer = require('multer');
 const path = require('path');
+const { ensureFolderExists } = require('../utils');
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: async function (req, file, cb) {
+    const folderPath = path.join(__dirname, '../uploads');
+    await ensureFolderExists(folderPath);
     cb(null, './uploads');
   },
   filename: function (req, file, cb) {

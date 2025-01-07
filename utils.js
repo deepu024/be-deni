@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 const ROLE = {
     USER: 'user',
@@ -72,4 +73,21 @@ const generateRandomPassword = () => {
     return password;
 }
 
-module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken,verifyRefreshToken, generateRandomPassword, createTokens };
+const ensureFolderExists = async (folderPath) => {
+    try {
+      // Check if the folder exists
+      await fs.promises.access(folderPath, fs.constants.F_OK);
+      console.log(`Folder already exists: ${folderPath}`);
+    } catch (error) {
+      // If the folder doesn't exist, create it
+      try {
+        await fs.promises.mkdir(folderPath, { recursive: true });
+        console.log(`Folder created: ${folderPath}`);
+      } catch (mkdirError) {
+        console.error(`Error creating folder: ${folderPath}`, mkdirError);
+        throw mkdirError;
+      }
+    }
+  };
+
+module.exports = { ROLE, createToken, CATEGORY, SIZES, getErrorMessageFromZodErros, verifyToken,verifyRefreshToken, generateRandomPassword, createTokens, ensureFolderExists };
