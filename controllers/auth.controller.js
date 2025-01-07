@@ -49,6 +49,7 @@ const refreshToken = (req, res, next) => {
     try {
         const refreshToken = req.body.refreshToken;
         const token = authService.refreshToken(refreshToken);
+        console.log("refresh token: " + refreshToken);
         return res.json({ message: 'Token refreshed successfully.', accessToken: token });
     } catch (error) {
         next(error);

@@ -4,10 +4,11 @@ const productService = require("../services/product.service");
 const { getErrorMessageFromZodErros } = require("../utils");
 const ErrorHandler = require('../errors/ErrorHandler');
 const STATUS_CODES = require('../statusCodes');
+const { uploadImage } = require("../services/upload.service");
 
 const createProduct = async (req, res, next) => {
     try {
-       const validateProduct = createProductInterface.safeParse(req.body);
+        const validateProduct = createProductInterface.safeParse(req.body);
 
        if (!validateProduct.success) {
            throw new ErrorHandler('Invalid product data.', STATUS_CODES.BAD_REQUEST, getErrorMessageFromZodErros(validateProduct));
