@@ -13,7 +13,13 @@ const uploadRoutes = require('./routes/upload.route');
 
 const createdConnection = require('./database/database');
 const errorHandler = require('./middleware/error.middleware');
+const setupCloudinary = require('./config/cloudinary');
 
+
+// Config cloudinary
+setupCloudinary();
+
+// Connect to MongoDB
 createdConnection()
 
 const { PORT } = process.env || 8080;
